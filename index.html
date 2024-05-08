@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Invitation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            /* Hide scrollbars */
+            position: relative;
+        }
+
+        .page {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            text-align: center;
+            color: #fff;
+        }
+
+        .page:nth-child(even) {
+            background-color: #62c2cc;
+        }
+
+        .page:nth-child(odd) {
+            background-color: #f9a43e;
+        }
+
+        #scrollbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            cursor: pointer;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 3em;
+        }
+
+        p {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="text"], input[type="email"] {
+            margin-bottom: 10px;
+            padding: 10px;
+            width: 100%;
+            font-size: 1.2em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background-color: #62c2cc;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #52a3ad;
+        }
+    </style>
+</head>
+
+<body>
+<div id="scrollbar"></div>
+<div class="page">
+    <div class="container">
+        <h1>Birthday Celebration!</h1>
+        <p>You're invited to celebrate [Name]'s birthday!</p>
+        <p>Date: [Date]</p>
+        <p>Time: [Time]</p>
+        <p>Location: [Location]</p>
+    </div>
+</div>
+<div class="page">
+    <div class="container">
+        <h1>Additional Details</h1>
+        <p>Join us for a fun-filled day with music, games, and delicious food!</p>
+        <p>Dress code: Casual</p>
+        <p>Gifts are not necessary, but your presence is the best present!</p>
+    </div>
+</div>
+<div class="page">
+    <div class="container">
+        <h1>Photo Gallery</h1>
+        <iframe
+            width="600"
+            height="450"
+            style="border:0"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDkUKKBpMrdyxbEAHz2nlmXNB0j2ozzyPw
+                &q=Space+Needle,Seattle+WA">
+        </iframe>
+    </div>
+</div>
+<div class="page">
+    <div class="container">
+        <h1>A Message from the Host</h1>
+        <p>Dear friends and family,</p>
+        <p>We are excited to celebrate this special day with all of you. Your presence means a lot to us.</p>
+        <p>See you soon!</p>
+    </div>
+</div>
+<div class="page">
+    <div class="container">
+        <h1>Contact Us</h1>
+        <p>If you have any questions or need assistance, feel free to contact us:</p>
+        <p>Email: [Email]</p>
+        <p>Phone: [Phone]</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let currentPageIndex = 0;
+        const pages = document.querySelectorAll('.page');
+        let startY;
+
+        function scrollToPage(index) {
+            if (index >= 0 && index < pages.length) {
+                window.scrollTo({
+                    top: pages[index].offsetTop,
+                    behavior: 'smooth'
+                });
+                currentPageIndex = index;
+            }
+        }
+
+        function debounce(func, wait, immediate) {
+            let timeout;
+            return function () {
+                const context = this;
+                const args = arguments;
+                const later = function () {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                const callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        }
+
+        const debouncedScroll = debounce(function (e) {
+            e.preventDefault(); // Prevent default scrolling behavior
+            const delta = Math.sign(e.deltaY);
+            if (delta > 0) {
+                scrollToPage(currentPageIndex + 1);
+            } else if (delta < 0) {
+                scrollToPage(currentPageIndex - 1);
+            }
+        }, 200); // Adjust debounce time as needed
+
+        window.addEventListener('wheel', debouncedScroll);
+
+        window.addEventListener('touchstart', function (e) {
+            startY = e.touches[0].clientY;
+        });
+
+        window.addEventListener('touchmove', function (e) {
+            e.preventDefault(); // Prevent default scrolling behavior
+        });
+
+        window.addEventListener('touchend', function (e) {
+            const endY = e.changedTouches[0].clientY;
+            const deltaY = endY - startY;
+            if (deltaY > 50) {
+                scrollToPage(currentPageIndex - 1); // Swipe up
+            } else if (deltaY < -50) {
+                scrollToPage(currentPageIndex + 1); // Swipe down
+            }
+        });
+
+        // Update scrollbar position based on scroll
+        window.addEventListener('scroll', function () {
+            const scrollTop = window.scrollY;
+            const totalHeight = document.body.clientHeight - window.innerHeight;
+            const scrollbar = document.getElementById('scrollbar');
+            const scrollbarPosition = (scrollTop / totalHeight) * 100;
+            scrollbar.style.left = scrollbarPosition + '%';
+        });
+    });
+</script>
+</body>
+</html>
