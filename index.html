@@ -83,16 +83,25 @@
             font-weight: 400;
             font-style: normal;
         }
+
+        .canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 
 <body>
+    <canvas id="canvas" class="canvas"></canvas>
     <div class="container">
         <div class="sections">
             <!-- Page 1: Introduction -->
             <div class="section">
                 <div>
-                    <h1>Birthday Invitation from [Name]</h1>
+                    <h1>[Name] is turning to [age]</h1>
                     <p>We are inviting you to celebrate [Name]'s birthday.</p>
                     <p>Date: [Date]</p>
                     <p>Time: [Time]</p>
@@ -219,6 +228,26 @@
                 }
             }
         });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerWidth;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+
+            // Initial call to resizeCanvas to set canvas size initially
+            resizeCanvas();
+
+            // Draw a rectangle
+            ctx.fillStyle = '#0000'; // Fill color
+            ctx.fillRect(0, 0, window.innerWidth, window.innerWidth); // (x, y, width, height)
+        });
+
     </script>
 
 </body>
